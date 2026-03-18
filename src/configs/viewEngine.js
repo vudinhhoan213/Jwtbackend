@@ -5,9 +5,9 @@ import express from "express";
  * @param {*} app - Ứng dụng Express cần cấu hình view engine.
  */
 const configViewEngine = (app) => {
-  app.use(express.static("./src/public")); // Cấu hình thư mục chứa các file tĩnh (CSS, JS, hình ảnh)
-  app.set("view engine", "ejs"); // Cấu hình view engine là EJS
-  app.set("views", "./src/views"); // Cấu hình thư mục chứa các file view (EJS)
+  app.use(express.static("./src/public"));
+  app.set("view engine", "ejs");
+  app.set("views", "./src/views");
 };
 
 export default configViewEngine;
