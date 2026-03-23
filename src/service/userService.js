@@ -16,15 +16,14 @@ const hashUserPassWord = (password) => {
 const createNewUser = async (email, password, username) => {
   let hashPass = hashUserPassWord(password);
 
-  const [results, fields] = await connection.query(
-    "INSERT INTO users (email, password, username) VALUES (?, ?, ?)",
-    [email, hashPass, username],
-    function (err, results, fields) {
-      if (err) {
-        console.log(err);
-      }
-    },
-  );
+  try {
+    const [results, fields] = await connection.execute(
+      "INSERT INTO users (email, password, username) VALUES (?, ?, ?)",
+      [email, hashPass, username],
+    );
+  } catch (err) {
+    console.log("Bạn bị lỗi", err);
+  }
 };
 
 const getUserList = async () => {
@@ -38,7 +37,19 @@ const getUserList = async () => {
   }
 };
 
+const deleteUser = async (id) => {
+  try {
+    const [results, fields] = await connection.execute(
+      "DELETE FROM users WHERE id= ?",
+      [id],
+    );
+  } catch (err) {
+    console.log("Bạn bị lỗi", err);
+  }
+};
+
 module.exports = {
   createNewUser,
   getUserList,
+  deleteUser,
 };
