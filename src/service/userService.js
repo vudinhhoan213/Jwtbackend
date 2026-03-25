@@ -48,8 +48,36 @@ const deleteUser = async (id) => {
   }
 };
 
+const getUserById = async (id) => {
+  try {
+    const [results, fields] = await connection.query(
+      "SELECT * FROM users WHERE id=?",
+      [id],
+    );
+    console.log(">>>check results: ", results);
+    return results;
+  } catch (err) {
+    return err;
+  }
+};
+
+const updateUserInfor = async (email, username, id) => {
+  try {
+    const [results, fields] = await connection.execute(
+      "update users set email = ?, username = ? WHERE id=?",
+      [email, username, id],
+    );
+    console.log(">>>check results: ", results);
+    return results;
+  } catch (err) {
+    return err;
+  }
+};
+
 module.exports = {
   createNewUser,
   getUserList,
   deleteUser,
+  getUserById,
+  updateUserInfor,
 };
