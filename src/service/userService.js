@@ -1,7 +1,8 @@
 import bcrypt from "bcryptjs";
 import mysql from "mysql2/promise";
 import db from "../models/index";
-import { where } from "sequelize";
+import { Model, where } from "sequelize";
+import { raw } from "body-parser";
 
 const salt = bcrypt.genSaltSync(10);
 
@@ -20,7 +21,7 @@ const createNewUser = async (email, password, username) => {
 
   try {
     await db.User.create({
-      usename: username,
+      username: username,
       email: email,
       password: hashPass,
     });
@@ -30,8 +31,36 @@ const createNewUser = async (email, password, username) => {
 };
 
 const getUserList = async () => {
-  let users = [];
+  // test relationship
+  let newUser = await db.User.findOne({
+    where: { id: 1 },
+    attributes: ["id", "username", "email"],
+    include: { model: db.Group, attributes: ["name", "description"] },
+    raw: true,
+    nest: true,
+  });
+  //test role
+  // let roles = await db.Group.findOne({
+  //   where: { id: 1 },
+  //   include: { model: db.Role },
+  //   raw: true,
+  //   nest: true,
+  // });
+  let roles = await db.Role.findAll({
+    attributes: ["url", "description"],
+    include: {
+      model: db.Group,
+      where: { id: 1 },
+      attributes: ["name", "description"],
+    },
+    raw: true,
+    nest: true,
+  });
 
+  console.log(">>> check newUser", newUser);
+  console.log(">>> check newRole", roles);
+
+  let users = [];
   users = await db.User.findAll();
   return users;
 
