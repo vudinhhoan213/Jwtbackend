@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import mysql from "mysql2/promise";
 import db from "../models/index";
+import { where } from "sequelize";
 
 const salt = bcrypt.genSaltSync(10);
 
@@ -29,51 +30,72 @@ const createNewUser = async (email, password, username) => {
 };
 
 const getUserList = async () => {
-  let user = [];
-  try {
-    const [results] = await connection.query("SELECT * FROM user");
-    user = results;
-    return user;
-  } catch (err) {
-    return user;
-  }
+  let users = [];
+
+  users = await db.User.findAll();
+  return users;
+
+  // try {
+  //   const [results] = await connection.query("SELECT * FROM user");
+  //   user = results;
+  //   return user;
+  // } catch (err) {
+  //   return user;
+  // }
 };
 
-const deleteUser = async (id) => {
-  try {
-    const [results, fields] = await connection.execute(
-      "DELETE FROM user WHERE id= ?",
-      [id],
-    );
-  } catch (err) {
-    console.log("Bạn bị lỗi", err);
-  }
+const deleteUser = async (userId) => {
+  await db.User.destroy({
+    where: { id: userId },
+  });
+  // try {
+  //   const [results, fields] = await connection.execute(
+  //     "DELETE FROM user WHERE id= ?",
+  //     [id],
+  //   );
+  // } catch (err) {
+  //   console.log("Bạn bị lỗi", err);
+  // }
 };
 
 const getUserById = async (id) => {
-  try {
-    const [results, fields] = await connection.query(
-      "SELECT * FROM user WHERE id=?",
-      [id],
-    );
-    console.log(">>>check results: ", results);
-    return results;
-  } catch (err) {
-    return err;
-  }
+  let user = {};
+  user = await db.User.findOne({
+    where: { id: id },
+  });
+
+  return (user = user.get({ plain: true }));
+  // try {
+  //   const [results, fields] = await connection.query(
+  //     "SELECT * FROM user WHERE id=?",
+  //     [id],
+  //   );
+  //   console.log(">>>check results: ", results);
+  //   return results;
+  // } catch (err) {
+  //   return err;
+  // }
 };
 
 const updateUserInfor = async (email, username, id) => {
-  try {
-    const [results, fields] = await connection.execute(
-      "update user set email = ?, username = ? WHERE id=?",
-      [email, username, id],
-    );
-    console.log(">>>check results: ", results);
-    return results;
-  } catch (err) {
-    return err;
-  }
+  await db.User.update(
+    { email: email, username: username },
+    {
+      where: {
+        id: id,
+      },
+    },
+  );
+  // try {
+  //   const [results, fields] = await connection.execute(
+  //     "update user set email = ?, username = ? WHERE id=?",
+  //     [email, username, id],
+  //   );
+  //   console.log(">>>check results: ", results);
+  //   return results;
+  // } catch (err) {
+  //   return err;
+  // }
 };
 
 module.exports = {

@@ -32,11 +32,12 @@ const handleDeleteUser = async (req, res) => {
 const getUpdateUserPage = async (req, res) => {
   let id = req.params.id;
   let user = await userService.getUserById(id);
-  console.log(">>> check user: ", user);
   let userData = {};
-  if (user && user.length > 0) {
-    userData = user[0];
-  }
+  userData = user;
+  console.log(userData);
+  // if (user && user.length > 0) {
+  //   userData = user[0];
+  // }
 
   return res.render("user-update.ejs", { userData });
 };
